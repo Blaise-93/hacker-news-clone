@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-jp2$^+mn=od3jv_u1gnej0)tkm0dl0_bv#o=nyms=!*mq7*nv('
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'celery',
-    'tailwind',
     'rest_framework',  # Shared API for subscriptions
     'corsheaders',
     'django_celery_beat',
@@ -49,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -116,13 +116,12 @@ USE_I18N = True
 
 USE_TZ = True
 
-AUTH_USER_MODEL = 'profile.User'
+AUTH_USER_MODEL = 'profiles.User'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = 'static_root'
 
 MEDIA_URL = '/media/'
@@ -149,19 +148,45 @@ CELERY_BEAT_SCHEDULE = {
 
     "fetch_hacker_news": {
         "task":
-        "news.tasks.fetch_hacker_news",
+        "news.tasks.fetch_and_sync_hacker_news",
+        # Run every 5 mins
         "schedule": crontab(minute='*/5'),
-        # hour=16, minute=43 run daily at midnight
     },
 
 
 
 }
 
+'''
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'celery': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+'''
 
 # settings.py
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'django-db'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
