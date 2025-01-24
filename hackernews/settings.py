@@ -147,14 +147,10 @@ CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 CELERY_BEAT_SCHEDULE = {
 
     "fetch_hacker_news": {
-        "task":
-        "news.tasks.fetch_and_sync_hacker_news",
+        "task": "news.tasks.fetch_and_sync_hacker_news",
         # Run every 5 mins
         "schedule": crontab(minute='*/5'),
     },
-
-
-
 }
 
 '''
@@ -246,5 +242,8 @@ CORS_ALLOWED_ORIGINS = [
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         'rest_framework.permissions.AllowAny'
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS':
+    'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 10
 }

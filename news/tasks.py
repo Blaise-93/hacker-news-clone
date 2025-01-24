@@ -40,8 +40,8 @@ def fetch_and_sync_hacker_news():
                     item.title = data.get('title')
                     item.url = data.get('url')
                     item.time = data.get('time')
-                    item.score = data.get('score')
-                    item.descendants = data.get('descendants')
+                    item.score = int(data.get('score', 0))
+                    item.descendants = int(data.get('descendants', 0))
                     item.kids = data.get('kids')
                     item.save()
                 except KeyError as e:
