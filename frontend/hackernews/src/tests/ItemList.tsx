@@ -1,8 +1,8 @@
-import React from 'react';
+
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { store } from '../store';
-import ItemList from './ItemList';
+import { store } from '.././store/store';
+import ItemList from '.././components/news/ItemList';
 
 test('renders loading state', () => {
   render(
@@ -10,7 +10,7 @@ test('renders loading state', () => {
       <ItemList />
     </Provider>
   );
- // expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
+ expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
 });
 
 test('renders items', async () => {
