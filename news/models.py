@@ -1,4 +1,5 @@
 from django.db import models
+from .utils import score_default, timestamp_default
 
 
 class Item(models.Model):
@@ -20,9 +21,9 @@ class Item(models.Model):
 
     type = models.CharField(max_length=255)
     title = models.CharField(max_length=255, blank=True, null=True)
-    text = models.TextField()
-    score = models.IntegerField()
-    time = models.IntegerField()
+    text = models.TextField(blank=True, null=True)
+    score = models.IntegerField(default=score_default())
+    time = models.IntegerField(default=timestamp_default())
     url = models.URLField(blank=True, null=True)
     descendants = models.IntegerField(blank=True, null=True)
     kids = models.ManyToManyField('self', blank=True)
@@ -30,7 +31,7 @@ class Item(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name_plural = 'News Item'
+        verbose_name_plural = 'News Items'
 
     def __str__(self):
-        return self.title
+        return str(self.title)

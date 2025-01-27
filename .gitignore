@@ -8,6 +8,7 @@ __pycache__/
 docker-compose.yml
 entrypoint.sh
 Dockerfile
+rough
 chattybots
 
 temp-plot.html

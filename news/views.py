@@ -1,62 +1,59 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from rest_framework import generics
 from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from news.models import Item
-from news.serializers import ItemSerializers, ItemDetailSerializer
-
+from news.serializers import ItemSerializer
 from logging import getLogger
 
 
 logging = getLogger(__name__)
 
 
-class StandardHackerPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = 'page_size'
-    max_page_size = 100
+class NewsItemPagination(PageNumberPagination):
+    page_size = 20
 
 
-class ItemList(APIView):
-    '''Represents API item list view where the view
-        instance data object from our  is displayed for our users.'''
+class ItemListView(generics.ListCreateAPIView):
+    '''API item list and create view. This view is
+       responsible to handle all the items listed from
+       the endpoint including the top level item (with the
+       children) and graciously handle the creation of the
+       list item too.'''
 
-    pagination_class = StandardHackerPagination
-
-    def get(self, request):
-        items = Item.objects.all()
-        try:
-            serializer = ItemSerializers(items, many=True)
-            return Response(serializer.data)
-        except Exception as e:
-            logging.error(f'Unknown Error: {e}')
-
-    def post(self, request):
-        serializer = ItemSerializers(data=request.data)
-        try:
-            if serializer.is_valid():
-                serializer.save()
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
-            return Response(
-                serializer.data, status=status.HTTP_400_BAD_REQUEST
-            )
-        except Exception as e:
-            logging.error(f'Server error: {e}')
-            return Response(
-                   {'Error msg': str(e)},
-                   status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+    pagination_class = NewsItemPagination
 
 
-class ItemDetail(APIView):
-    '''Retrieve a single new items from the top level item of the hacker news
+def get_queryset(self, request):
+    queryset = super(self, ItemListView).get_queryset()
+    # exclude items with no title if any.
+    queryset = self.queryset.exclude(title__isnull=True)
+    # get the item type the user input in the param from
+    # frontend
+    item_type = self.request.query_params.get('type')
+
+    if item_type:
+        queryset = queryset.filter(type=item_type)
+    # searched item param by the user
+    search_text = request.query_params.get('search')
+    if search_text:
+        # the user can only search by the title of the news
+        queryset = queryset.filter(title__icontains=search_text)
+    return queryset
+
+
+class ItemDetailView(APIView):
+    '''Retrieve a single new items from the top
+       level item of the hacker news. (based on
+       BONUS question.)
     '''
 
     def get(self, request, pk):
         item = Item.objects.get(pk=pk)
-        serializer = ItemDetailSerializer(item)
+        serializer = ItemSerializer(item)
         try:
             return Response(serializer.data)
         except Exception as e:
@@ -64,3 +61,15 @@ class ItemDetail(APIView):
             Response(
                 {'Error msg': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ItemUpdateView(generics.UpdateAPIView):
+    '''Update the item view endpoint a user created.'''
+    queryset = Item
+    serializer_class = ItemSerializer
+
+
+class ItemDeleteView(generics.DestroyAPIView):
+    '''Delete the item view'''
+    queryset = Item
+    serializer_class = ItemSerializer
