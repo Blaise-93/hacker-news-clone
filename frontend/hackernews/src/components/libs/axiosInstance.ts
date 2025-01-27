@@ -11,6 +11,5 @@ export const axiostInstance = axios.create(
             "Content-Type": "application/json",
             Accept: "application/json",
         },
-        withCredentials: true
     }
 )

@@ -66,3 +66,4 @@ def fetch_and_sync_hacker_news():
 # to make it non-blocking when the django celery beat
 # scheduler thread runs
 fetch_and_sync_hacker_news.delay()
+
