@@ -34,6 +34,7 @@ def get_queryset(self, request):
     # get the item type the user input in the param from
     # frontend
     item_type = self.request.query_params.get('type')
+    print('item-type:', item_type)
 
     if item_type:
         queryset = queryset.filter(type=item_type)
@@ -42,6 +43,7 @@ def get_queryset(self, request):
     if search_text:
         # the user can only search by the title of the news
         queryset = queryset.filter(title__icontains=search_text)
+        print(queryset)
     return queryset
 
 

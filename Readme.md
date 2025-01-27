@@ -66,7 +66,7 @@ _Installation_
 _Running the App_
 
 1. Start the backend server: python manage.py runserver
-2. Start the frontend server: npm start
+2. Start the frontend server: npm run dev
 3. Open a web browser and navigate to http://localhost:3000
 4.  Start the celery server: celery -a hackernews worker -l info
 5. Start the celery beat server: celery -A hackernews beat -l info --scheduler django_celery_beat.schedulers.DatabaseScheduler 
