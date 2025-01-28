@@ -42,7 +42,7 @@ const TabularItems: React.FC = () => {
         </h1>
         <Link
           to={"/item-create"}
-          className="text-center md:3xl text-gray-800 text-xl"
+          className="hover:text-blue-700 hover:underline text-center md:3xl text-gray-800 text-xl"
         >
           Create a new Item
         </Link>
@@ -114,30 +114,33 @@ const TabularItems: React.FC = () => {
                 <td className="flex items-center px-6 py-4">
                   <Link
                     to={`/update-item/${item.id}`}
-                    className="pr-2 font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                    className="pr-2 font-medium text-blue-600 
+                    dark:text-blue-500 hover:underline hover:text-green-500"
                   >
                     Update
                   </Link>
-                </td>
-                <td className="px-6 py-4">
+                  
                   <Link
                     to={`/delete-item/${item.id}`}
                     className="pr-2 font-medium text-blue-600
-                     dark:text-blue-500 hover:underline"
+                     dark:text-blue-500 hover:underline hover:text-red-500"
                   >
                     Delete
                   </Link>
+             
                 </td>
+               
               </tr>
             </tbody>
           ))}
         </table>
 
-        <ItemPagination
+      
+      </div>
+      <ItemPagination
           currentPage={page}
           totalPages={Math.ceil(items.length / 20)}
         />
-      </div>
     </div>
   );
 };

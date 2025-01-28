@@ -12,7 +12,7 @@ logging = getLogger(__name__)
 
 
 class NewsItemPagination(PageNumberPagination):
-    page_size = 20
+    page_size = 15
 
 
 class ItemListView(generics.ListCreateAPIView):

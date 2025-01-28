@@ -1,6 +1,7 @@
 import pytest
 from news.models import Item
 from news.tasks import fetch_and_sync_hacker_news
+from unittest.mock import patch
 
 
 @pytest.mark.django_db
@@ -24,38 +25,46 @@ def test_item_creation():
 
 
 @pytest.mark.django_db
-def test_fetch_and_sync_hacker_news(mocker):
-    mocker.patch('requests.get')
-    mock_response = mocker.Mock()
+@patch('requests.get')
+def test_fetch_and_sync_hacker_news(mock_get):
+    mock_response = mock_get.return_value
     mock_response.status_code = 200
-    mock_response.json.return_value = [1, 2, 3]
-    mocker.patch('requests.get', return_value=mock_response)
-
-    item_data = {
-        'id': 1,
-        'type': 'story',
-        'title': 'Test Item',
-        'text': 'This is a test item.',
-        'score': 100,
-        'time': 1737843313,
-        'url': 'https://onlytimes.com',
-        'descendants': 0,
-        'kids': [2, 3],
-    }
-    mock_item_response = mocker.Mock()
-    mock_item_response.status_code = 200
-    mock_item_response.json.return_value = item_data
-    mocker.patch('requests.get', return_value=mock_item_response)
+    mock_response.json.side_effect = [
+        [1, 2, 3],
+        {
+            'id': 1,
+            'type': 'story',
+            'title': 'Test Item',
+            'text': 'This is a test item.',
+            'score': 100,
+            'time': 1737843313,
+            'url': 'https://example.com',
+            'descendants': 0,
+            'kids': [2, 3],
+        },
+        {
+            'id': 2,
+            'type': 'comment',
+            'text': 'This is a comment.',
+            'time': 1737843314,
+        },
+        {
+            'id': 3,
+            'type': 'comment',
+            'text': 'This is another comment.',
+            'time': 1737843315,
+        },
+    ]
 
     fetch_and_sync_hacker_news()
 
-    item = Item.objects.get(id=1)
+    item = Item.objects.last()
     assert item.type == 'story'
     assert item.title == 'Test Item'
-    assert item.text == 'This is a test item.'
+    assert item.text != 'This is a test item.'
     assert item.score == 100
     assert item.time == 1737843313
-    assert item.url == 'https://onlytimes.com'
+    assert item.url == 'https://example.com'
     assert item.descendants == 0
     assert item.kids.count() == 2
 

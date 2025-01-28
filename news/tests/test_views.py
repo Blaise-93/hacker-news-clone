@@ -7,7 +7,7 @@ from news.models import Item
 @pytest.mark.django_db
 def test_fetch_items():
     client = APIClient()
-    url = reverse('item-list')
+    url = reverse('news:item-list')
     response = client.get(url)
     assert response.status_code == 200
 
@@ -15,7 +15,7 @@ def test_fetch_items():
 @pytest.mark.django_db
 def test_create_item():
     client = APIClient()
-    url = reverse('item-list')
+    url = reverse('news:item-list')
     data = {
         'type': 'story',
         'title': 'Test Item',
@@ -43,7 +43,7 @@ def test_update_item():
         descendants=0,
     )
     client = APIClient()
-    url = reverse('item-detail', args=[item.id])
+    url = reverse('news:item-update', args=[item.id])
     data = {
         'type': 'story',
         'title': 'Updated Test Item',
@@ -73,7 +73,7 @@ def test_delete_item():
         descendants=0,
     )
     client = APIClient()
-    url = reverse('item-detail', args=[item.id])
+    url = reverse('news:item-delete', args=[item.id])
     response = client.delete(url)
     assert response.status_code == 204
     assert Item.objects.count() == 0

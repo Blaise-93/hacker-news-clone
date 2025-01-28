@@ -19,7 +19,7 @@ class Item(models.Model):
     - date_updated: The date this item model was updated for audit purpose
     '''
 
-    type = models.CharField(max_length=255)
+    type = models.CharField(max_length=255, blank=True, null=True)
     title = models.CharField(max_length=255, blank=True, null=True)
     text = models.TextField(blank=True, null=True)
     score = models.IntegerField(default=score_default())
