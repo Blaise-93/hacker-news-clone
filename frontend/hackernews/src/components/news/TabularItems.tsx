@@ -3,13 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { fetchItems } from "../libs/ItemSlice";
-import ItemUpdate from "./ItemUpdate";
-import ItemDelete from "./ItemDelete";
 import ItemPagination from "./ItemPagination";
 
 const TabularItems: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const items = useSelector((state: RootState) => state.items.items);
+  const items = useSelector((state: RootState) => state.items.items) || [];
   const status = useSelector((state: RootState) => state.items.status);
   const error = useSelector((state: RootState) => state.items.error);
   const location = useLocation();
@@ -33,13 +31,13 @@ const TabularItems: React.FC = () => {
   }
 
   if (status === "failed") {
-    return <div className="">Error occured: {error}</div>;
+    return <div className="">{error}</div>;
   }
 
   return (
     <div>
       <div className="flex flex-col item-center md:flex-row justify-between">
-        <h1 className="text-center md:4xl text-gray-800 text-2xl">
+        <h1 className="pb-4 text-center md:4xl text-gray-800 text-2xl">
           Hacker News
         </h1>
         <Link
@@ -50,14 +48,14 @@ const TabularItems: React.FC = () => {
         </Link>
       </div>
 
-      <form onSubmit={handleSearch}>
-        <input
+      <form onSubmit={handleSearch} className="mx-auto py-4 flex space-x-6 items-center">
+        <input className="rounded-md py-2"
           type="text"
           placeholder="Search by title"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button type="submit">Search</button>
+        <button className="bg-blue-700 rounded-md text-white py-2 px-2" type="submit">Search</button>
       </form>
 
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -69,10 +67,6 @@ const TabularItems: React.FC = () => {
                   <span>S/N</span>
                 </div>
               </th>
-              <th scope="col" className="px-6 py-3">
-                Title
-              </th>
-
               <th scope="col" className="px-6 py-3">
                 Title
               </th>
@@ -88,15 +82,8 @@ const TabularItems: React.FC = () => {
               <th scope="col" className="px-6 py-3">
                 Descendant
               </th>
-
               <th scope="col" className="px-6 py-3">
                 Time
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Kids
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Text
               </th>
               <th scope="col" className="px-6 py-3">
                 URL
@@ -108,12 +95,9 @@ const TabularItems: React.FC = () => {
           </thead>
 
           {items.map((item) => (
-            <tbody>
+            <tbody key={item.id}>
               <tr
-                className="text-base bg-white border-b dark:bg-gray-800
-                 dark:border-gray-700 
-                  hover:bg-gray-50 dark:hover:bg-gray-600"
-                key={item.id}
+                className="text-base bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 <td className="w-4 p-4">
                   <div className="flex items-center">
@@ -126,21 +110,23 @@ const TabularItems: React.FC = () => {
                 <td className="px-6 py-4">{item.score}</td>
                 <td className="px-6 py-4">{item.descendant}</td>
                 <td className="px-6 py-4">{item.time}</td>
-                <td className="px-6 py-4">{item.kids.map((kid) => kid)}</td>
                 <td className="px-6 py-4">{item.url}</td>
-
                 <td className="flex items-center px-6 py-4">
                   <Link
-                    to={"/update-item"}
-                    className="pr-2 font-medium text-blue-600
-                      dark:text-blue-500 hover:underline"
+                    to={`/update-item/${item.id}`}
+                    className="pr-2 font-medium text-blue-600 dark:text-blue-500 hover:underline"
                   >
-                    <ItemUpdate id={item.id} />
+                    Update
                   </Link>
                 </td>
                 <td className="px-6 py-4">
-                  <ItemDelete id={item.id} />
-                  Delete item
+                  <Link
+                    to={`/delete-item/${item.id}`}
+                    className="pr-2 font-medium text-blue-600
+                     dark:text-blue-500 hover:underline"
+                  >
+                    Delete
+                  </Link>
                 </td>
               </tr>
             </tbody>

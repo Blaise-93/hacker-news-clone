@@ -7,7 +7,7 @@ import ItemDelete from '../components/news/ItemDelete';
 test('renders delete item button', () => {
   render(
     <Provider store={store}>
-      <ItemDelete id={1} />
+      <ItemDelete/>
     </Provider>
   );
   expect(screen.getByText(/Delete/i)).toBeInTheDocument();
@@ -16,7 +16,7 @@ test('renders delete item button', () => {
 test('deletes an item', () => {
   render(
     <Provider store={store}>
-      <ItemDelete id={1} />
+      <ItemDelete/>
     </Provider>
   );
   fireEvent.click(screen.getByText(/Delete/i));

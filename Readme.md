@@ -71,6 +71,10 @@ _Running the App_
 4.  Start the celery server: celery -a hackernews worker -l info
 5. Start the celery beat server: celery -A hackernews beat -l info --scheduler django_celery_beat.schedulers.DatabaseScheduler 
 
+- For tests;
+1. run the backend tests on the terminal by typing `pytest`
+2. for frontend test where we used Jest, type `npm test or npx jest`
+
 Links
 - https://docs.djangoproject.com/en/3.2/
 - https://reactjs.org/docs/getting-started.html

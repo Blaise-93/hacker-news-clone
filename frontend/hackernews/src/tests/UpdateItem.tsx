@@ -7,7 +7,7 @@ import UpdateItem from './../components/news/ItemUpdate';
 test('renders update item form', () => {
   render(
     <Provider store={store}>
-      <UpdateItem id={1} />
+      <UpdateItem/>
     </Provider>
   );
   expect(screen.getByPlaceholderText(/Title/i)).toBeInTheDocument();
@@ -17,7 +17,7 @@ test('renders update item form', () => {
 test('updates an item', () => {
   render(
     <Provider store={store}>
-      <UpdateItem id={1} />
+      <UpdateItem/>
     </Provider>
   );
   fireEvent.change(screen.getByPlaceholderText(/Title/i), { target: { value: 'Updated Title' } });

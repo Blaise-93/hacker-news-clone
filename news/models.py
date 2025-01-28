@@ -32,6 +32,7 @@ class Item(models.Model):
 
     class Meta:
         verbose_name_plural = 'News Items'
+        ordering = ['-date_created']
 
     def __str__(self):
         return str(self.title)

@@ -6,7 +6,7 @@ from rest_framework.pagination import PageNumberPagination
 from news.models import Item
 from news.serializers import ItemSerializer
 from logging import getLogger
-
+from django.db.models import Q
 
 logging = getLogger(__name__)
 
@@ -16,33 +16,25 @@ class NewsItemPagination(PageNumberPagination):
 
 
 class ItemListView(generics.ListCreateAPIView):
-    '''API item list and create view. This view is
-       responsible to handle all the items listed from
-       the endpoint including the top level item (with the
-       children) and graciously handle the creation of the
-       list item too.'''
-
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
     pagination_class = NewsItemPagination
 
-    def get_queryset(self, request):
-        queryset = super(self, ItemListView).get_queryset()
-        # exclude items with no title if any.
-        queryset = self.queryset.exclude(title__isnull=True)
-        # get the item type the user input in the param from
-        # frontend
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        # exclude title that comes with empty field
+        # from hackernews
+        queryset = queryset.exclude(title__isnull=True)
         item_type = self.request.query_params.get('type')
-        print('item-type:', item_type)
-
         if item_type:
             queryset = queryset.filter(type=item_type)
-        # searched item param by the user
-        search_text = request.query_params.get('search')
+        search_text = self.request.query_params.get('search')
         if search_text:
-            # the user can only search by the title of the news
-            queryset = queryset.filter(title__icontains=search_text)
-            print(queryset)
+            # filter items based on id and title
+            queryset = queryset.filter(
+                Q(title__icontains=search_text) |
+                Q(id__icontains=search_text)
+            )
         return queryset
 
 

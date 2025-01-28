@@ -6,7 +6,6 @@ from news.models import Item
 
 @pytest.mark.django_db
 def test_fetch_items():
-    '''Test the fetch item client'''
     client = APIClient()
     url = reverse('item-list')
     response = client.get(url)
@@ -15,7 +14,6 @@ def test_fetch_items():
 
 @pytest.mark.django_db
 def test_create_item():
-    '''Test item create api view code'''
     client = APIClient()
     url = reverse('item-list')
     data = {
@@ -35,7 +33,6 @@ def test_create_item():
 
 @pytest.mark.django_db
 def test_update_item():
-    '''Test item update api call.'''
     item = Item.objects.create(
         type='story',
         title='Test Item',
@@ -53,7 +50,7 @@ def test_update_item():
         'text': 'This is an updated test item.',
         'score': 150,
         'time': 1737843313,
-        'url': 'https://example.com',
+        'url': 'https://onlytimes.com',
         'descendants': 0,
         'kids': [],
     }
@@ -66,7 +63,6 @@ def test_update_item():
 
 @pytest.mark.django_db
 def test_delete_item():
-    '''test delete item '''
     item = Item.objects.create(
         type='story',
         title='Test Item',
